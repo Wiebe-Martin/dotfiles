@@ -6,15 +6,10 @@
 #: individual font faces and even specify special fonts for particular
 #: characters.
 
-font_family              CaskaydiaCove Nerd Font
-bold_font                CaskaydiaCove Nerd Font
-italic_font              CaskaydiaCove Nerd Font
-bold_italic_font         CaskaydiaCove Nerd Font
-
-regular_font_style       Medium
-bold_font_style          Heavy
-italic_font_style        Medium Italic
-bold_italic_font_style   Heavy Italic
+# font_family      Cascadia Code NF
+# bold_font        auto
+# italic_font      auto
+# bold_italic_font auto
 
 #: You can specify different fonts for the bold/italic/bold-italic
 #: variants. The easiest way to select fonts is to run the `kitten
@@ -25,11 +20,7 @@ bold_italic_font_style   Heavy Italic
 #: <https://sw.kovidgoyal.net/kitty/kittens/choose-fonts/#font-spec-
 #: syntax>.
 
-font_size 14.0
-
-map ctrl+semicolon send_text all \x1b[59;5u
-
-launch "source ~/.zshrc; clear"
+font_size 12.0
 
 #: Font size (in pts).
 
@@ -1326,7 +1317,7 @@ launch "source ~/.zshrc; clear"
 
 #: The foreground and background colors.
 
-background_opacity 0.8
+# background_opacity 1.0
 
 #: The opacity of the background. A number between zero and one, where
 #: one is opaque and zero is fully transparent. This will only work if
@@ -2794,7 +2785,9 @@ background_opacity 0.8
 #: }}}
 
 
-# BEGIN_KITTY_THEME
-# Rosé Pine Moon
-include current-theme.conf
-# END_KITTY_THEME
+# BEGIN_KITTY_FONTS
+font_family      family="CaskaydiaCove Nerd Font"
+bold_font        auto
+italic_font      auto
+bold_italic_font auto
+# END_KITTY_FONTS
