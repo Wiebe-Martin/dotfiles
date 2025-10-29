@@ -2,13 +2,10 @@ return {
     -- Main LSP Configuration
     "neovim/nvim-lspconfig",
     dependencies = {
-        -- Automatically install LSPs and related tools to stdpath for Neovim
         { "williamboman/mason.nvim", config = true }, -- NOTE: Must be loaded before dependants
         "williamboman/mason-lspconfig.nvim",
         "WhoIsSethDaniel/mason-tool-installer.nvim",
 
-        -- Useful status updates for LSP.
-        -- NOTE: `opts = {}` is the same as calling `require('fidget').setup({})`
         { "j-hui/fidget.nvim", opts = {} },
 
         -- Allows extra capabilities provided by nvim-cmp
@@ -25,12 +22,12 @@ return {
                     "python", -- Example debuggers, update as needed
                     "delve", -- Go debugger
                     "codelldb", -- C/C++/Rust
+                    "clangd", -- C
                 },
             },
         },
     },
     config = function()
-        -- Buffer-local LSP mappings and UX
         vim.api.nvim_create_autocmd("LspAttach", {
             group = vim.api.nvim_create_augroup("kickstart-lsp-attach", { clear = true }),
             callback = function(event)
@@ -39,17 +36,13 @@ return {
                     vim.keymap.set(mode, keys, func, { buffer = event.buf, desc = "LSP: " .. desc })
                 end
 
-                -- Rename
                 map("<leader>rn", vim.lsp.buf.rename, "[R]e[n]ame")
 
-                -- Code actions
                 map("<leader>ca", vim.lsp.buf.code_action, "[C]ode [A]ction", { "n", "x" })
 
-                -- Reference highlights
                 local client = vim.lsp.get_client_by_id(event.data.client_id)
                 if client and client.supports_method(vim.lsp.protocol.Methods.textDocument_documentHighlight) then
                     local highlight_augroup = vim.api.nvim_create_augroup("kickstart-lsp-highlight", { clear = false })
-
                     vim.api.nvim_create_autocmd({ "CursorHold", "CursorHoldI" }, {
                         buffer = event.buf,
                         group = highlight_augroup,
@@ -71,30 +64,18 @@ return {
                     })
                 end
 
-                -- Inlay hints toggle (Neovim 0.11 API)
-                if
-                    client
-                    and client.supports_method(vim.lsp.protocol.Methods.textDocument_inlayHint)
-                    and vim.lsp.inlay_hint
-                then
+                if client and client.supports_method(vim.lsp.protocol.Methods.textDocument_inlayHint) then
                     map("<leader>th", function()
-                        local enabled = vim.lsp.inlay_hint.is_enabled({ bufnr = event.buf })
-                        vim.lsp.inlay_hint.enable(not enabled, { bufnr = event.buf })
+                        vim.lsp.inlay_hint.enable(not vim.lsp.inlay_hint.is_enabled({ bufnr = event.buf }))
                     end, "[T]oggle Inlay [H]ints")
                 end
             end,
         })
 
-        -- Capabilities (nvim-cmp)
         local capabilities = vim.lsp.protocol.make_client_capabilities()
         capabilities = vim.tbl_deep_extend("force", capabilities, require("cmp_nvim_lsp").default_capabilities())
 
-        -- Define server-specific configs to extend the defaults provided by nvim-lspconfig (lsp/*.lua)
         local servers = {
-            -- Typescript
-            ts_ls = {}, -- tsserver is deprecated -> use ts_ls
-
-            -- Python (pylsp)
             pylsp = {
                 settings = {
                     pylsp = {
@@ -109,40 +90,55 @@ return {
                             pylsp_isort = { enabled = true },
                             rope_autoimport = {
                                 enabled = true,
-                                memory = true, -- use in-memory cache instead of writing to disk
-                                fuzzy = false, -- disable fuzzy matching to speed things up
-                                projectRoot = vim.fn.getcwd(), -- limit scope to the current working directory
-                                maxFiles = 1000, -- limit the number of files scanned
+                                memory = true,
+                                fuzzy = false,
+                                projectRoot = vim.fn.getcwd(),
+                                maxFiles = 1000,
                             },
                         },
                     },
                 },
             },
-
-            -- Web
             html = { filetypes = { "html", "twig", "hbs" } },
+            gopls = {
+                settings = {
+                    gopls = {
+                        analyses = {
+                            unusedparams = true,
+                            shadow = true,
+                        },
+                        staticcheck = true,
+                    },
+                },
+            },
             cssls = {},
             tailwindcss = {},
-
-            -- Infra
             dockerls = {},
             sqlls = {},
             terraformls = {},
             jsonls = {},
             yamlls = {},
+            clangd = {
+                cmd = { "clangd", "--background-index" },
+                filetypes = { "c", "cpp", "objc", "objecpp" },
+                root_dir = require("lspconfig/util").root_pattern("compile_commands.json", "compile_flags.txt", ".git"),
+            },
+            prolog = {},
         }
 
-        -- Extend defaults for each server and include capabilities
-        for name, cfg in pairs(servers) do
-            vim.lsp.config(name, vim.tbl_deep_extend("force", { capabilities = capabilities }, cfg or {}))
-        end
+        vim.lsp.config(tinymist).setup({
+            single_file_support = true,
+            settings = {
+                exportPdf = "onSave",
+            },
+        })
 
-        -- Lua
-        vim.lsp.config("lua_ls", {
-            capabilities = capabilities,
+        lspconfig.lua_ls.setup({
             settings = {
                 Lua = {
-                    runtime = { version = "LuaJIT" },
+                    runtime = {
+                        version = "LuaJIT",
+                    },
                     diagnostics = {
                         globals = {
                             "vim",
@@ -152,54 +148,41 @@ return {
                     workspace = {
                         library = vim.api.nvim_get_runtime_file("", true),
                     },
-                    telemetry = { enable = false },
+                    telemetry = {
+                        enable = false,
+                    },
                 },
             },
         })
 
-        -- Clangd (let defaults handle root_dir and filetypes; just add capabilities/flags)
-        vim.lsp.config("clangd", {
-            capabilities = capabilities,
-            cmd = { "clangd", "--background-index" },
-        })
-
-        -- CMake
-        vim.lsp.config("cmake", {
-            capabilities = capabilities,
-        })
-
-        vim.lsp.config("tinymist", {
-            single_file_support = true,
-            settings = {
-                exportPdf = "onSave",
+        lspconfig.volar.setup({
+            init_options = {
+                typescript = {
+                    tsdk = vim.fn.stdpath("data")
+                        .. "/mason/packages/typescript-language-server/node_modules/typescript/lib",
+                },
             },
         })
 
-        -- Mason core
+        lspconfig.cmake.setup({})
+
         require("mason").setup()
 
-        -- Ensure tools and LSP servers are installed
         local ensure_installed = vim.tbl_keys(servers or {})
         vim.list_extend(ensure_installed, {
-            "lua_ls",
-            "clangd",
-            "cmake",
             "stylua",
-            "clangd", -- safe if duplicated
+            "clangd",
         })
-        require("mason-tool-installer").setup({ ensure_installed = ensure_installed })
+        -- require("mason-tool-installer").setup({ ensure_installed = ensure_installed })
 
-        -- Optionally, ask mason-lspconfig to ensure servers are installed (new API doesn't require handlers)
         require("mason-lspconfig").setup({
-            ensure_installed = ensure_installed,
+            handlers = {
+                function(server_name)
+                    local server = servers[server_name] or {}
+                    server.capabilities = vim.tbl_deep_extend("force", {}, capabilities, server.capabilities or {})
+                    lspconfig[server_name].setup(server)
+                end,
+            },
         })
-
-        -- Enable all configured servers so they attach for their filetypes
-        for name, _ in pairs(servers) do
-            pcall(vim.lsp.enable, name)
-        end
-        for _, name in ipairs({ "lua_ls", "clangd", "cmake" }) do
-            pcall(vim.lsp.enable, name)
-        end
     end,
 }

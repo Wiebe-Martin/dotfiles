@@ -18,10 +18,11 @@ require("lazy").setup({
     -- require("plugins.lazygit"),
     -- require("plugins.telescope"),
     -- require("plugins.transparent"),
-    require("colorshemes.nordic"),
+    require("colorshemes.gruvbox"),
     require("plugins.autocomplete"),
     require("plugins.dap"),
     require("plugins.dap-ui"),
+    require("plugins.copilot"),
     require("plugins.gitsigns"),
     require("plugins.harpoon"),
     require("plugins.indent-blankline"),
@@ -38,4 +39,5 @@ require("lazy").setup({
     require("plugins.tmux"),
     require("plugins.treesiter"),
     require("plugins.trouble"),
+    require("plugins.typst-preview"),
 })

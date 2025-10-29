@@ -10,7 +10,7 @@ fi
 
 export PATH=/home/martin/.local/bin:$PATH
 
-export LC_ALL=C.utf8
+export LC_ALL=en_US.utf8
 
 # Source/Load zinit
 source "${ZINIT_HOME}/zinit.zsh"
@@ -96,9 +96,12 @@ export NVM_DIR="$HOME/.nvm"
 
 # export PATH="$PATH:/opt/nvim-linux-x86_64/bin"
 
+export EDITOR=nvim
+
 export PATH=$PATH:/usr/local/go/bin
 export PATH=$PATH:/home/martin/go/bin
 export PATH=$PATH:/snap/bin
+export PATH=$PATH:$HOME/scripts
 
 export PATH="$PATH:/home/martin/STMicroelectronics/STM32Cube/STM32CubeProgrammer/bin"
 
