@@ -1,0 +1,8 @@
+{
+  "updateIntervalMinutes": 60,
+  "updateTerminalCommand": "kitty -e",
+  "currentIconName": "world-download",
+  "hideOnZero": false,
+  "customCmdGetNumUpdates": "emerge -pq --update --changed-use --deep @world | wc -l",
+  "customCmdDoSystemUpdate": "update && upgrade"
+}
