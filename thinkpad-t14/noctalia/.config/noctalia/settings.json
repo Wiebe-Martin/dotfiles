@@ -509,6 +509,10 @@
             {
                 "enabled": true,
                 "id": "mango"
+            },
+            {
+                "enabled": true,
+                "id": "yazi"
             }
         ],
         "enableUserTheming": false

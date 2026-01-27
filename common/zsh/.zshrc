@@ -1,106 +1,107 @@
-# Created by newuser for 5.9
-# # Set the directory we want to store zinit and plugins
+# ~/.zshrc
+# Interactive shell configuration
+
+### Zinit ###########################################################
+
 ZINIT_HOME="${XDG_DATA_HOME:-${HOME}/.local/share}/zinit/zinit.git"
 
-# Download Zinit, if it's not there yet
 if [ ! -d "$ZINIT_HOME" ]; then
    mkdir -p "$(dirname $ZINIT_HOME)"
    git clone https://github.com/zdharma-continuum/zinit.git "$ZINIT_HOME"
 fi
 
-export PATH=/home/martin/.local/bin:$PATH
+source "$ZINIT_HOME/zinit.zsh"
 
-export LC_ALL=en_US.utf8
+### Plugins ########################################################
 
-# Source/Load zinit
-source "${ZINIT_HOME}/zinit.zsh"
-
-# Add in zsh plugins
 zinit light zsh-users/zsh-syntax-highlighting
 zinit light zsh-users/zsh-completions
 zinit light zsh-users/zsh-autosuggestions
 zinit light Aloxaf/fzf-tab
 # zinit light jeffreytse/zsh-vi-mode
+
 zinit ice depth=1
 
-# Add in snippets
+### Oh-My-Zsh snippets ############################################
+
 zinit snippet OMZL::git.zsh
 zinit snippet OMZP::git
-# zinit snippet OMZP::sudo
-# zinit snippet OMZP::gentoo
 zinit snippet OMZP::command-not-found
 
-# Load completions
-autoload -Uz compinit && compinit
+### Completion ####################################################
+
+autoload -Uz compinit
+compinit
 
 zinit cdreplay -q
 
-# eval "$(oh-my-posh init zsh --config /home/martin/Downloads/tiwahu.omp.json)"
+### Prompt ########################################################
+
 eval "$(starship init zsh)"
 
-# History
+### History #######################################################
+
 HISTSIZE=5000
-HISTFILE=~/.zsh_history
 SAVEHIST=$HISTSIZE
-HISTDUP=erase
+HISTFILE="$HOME/.zsh_history"
+
 setopt appendhistory
 setopt sharehistory
 setopt hist_ignore_space
+setopt hist_ignore_dups
 setopt hist_ignore_all_dups
 setopt hist_save_no_dups
-setopt hist_ignore_dups
 setopt hist_find_no_dups
 
-# Completion styling
+### Completion styling ############################################
+
 zstyle ':completion:*' matcher-list 'm:{a-z}={A-Za-z}'
 zstyle ':completion:*' list-colors "${(s.:.)LS_COLORS}"
 zstyle ':completion:*' menu no
+
 zstyle ':fzf-tab:complete:cd:*' fzf-preview 'ls --color $realpath'
 zstyle ':fzf-tab:complete:__zoxide_z:*' fzf-preview 'ls --color $realpath'
 
-# Aliases
-alias ls='ls --color -A'
-alias ll='ls -lh --color -A'
+### Aliases #######################################################
+
+alias ls='ls --color=auto -A'
+alias ll='ls -lh --color=auto -A'
 alias vim='nvim'
 alias c='clear'
 alias sf='nvim $(fzf)'
 alias tm='tmux attach || tmux new'
 alias ts='tmux-sessionizer'
 alias tsn='tmux-sessionizer && nvim .'
-alias rel="xrdb merge $HOME/.config/st/xresources && kill -USR1 $(pidof st)"
+alias rel='xrdb merge ~/.config/st/xresources && kill -USR1 $(pidof st)'
 
 alias update='sudo emaint --auto sync'
 alias upgrade='sudo emerge --ask --quiet --update --deep --newuse @world'
 
-# Set up fzf key bindings and fuzzy completion
+### Functions #####################################################
+
+function y() {
+	local tmp="$(mktemp -t "yazi-cwd.XXXXXX")" cwd
+	command yazi "$@" --cwd-file="$tmp"
+	IFS= read -r -d '' cwd < "$tmp"
+	[ "$cwd" != "$PWD" ] && [ -d "$cwd" ] && builtin cd -- "$cwd"
+	rm -f -- "$tmp"
+}
+
+### Tools #########################################################
+
+# zoxide
 eval "$(zoxide init --cmd cd zsh)"
 
-# [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
-[ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
+# fzf
+[[ -f ~/.fzf.zsh ]] && source ~/.fzf.zsh
 
-# Keybindings
+### Keybindings ###################################################
+
 bindkey -e
 bindkey '^p' history-search-backward
 bindkey '^n' history-search-forward
 bindkey '^[w' kill-region
-
 bindkey '^Y' forward-char
 bindkey -r '^F'
+bindkey -s '^f' 'tmux-sessionizer\n'
 
-bindkey -s ^f "tmux-sessionizer\n"
-
-# source "$HOME/key-bindings.zsh"
-# export FZF_TMUX_OPTS='-d 40%'
-# export FZF_DEFAULT_COMMAND='fd --type f --hidden --exclude mnt --search-path / --follow'
-
-# export PATH="$PATH:/opt/nvim-linux-x86_64/bin"
-
-export EDITOR=nvim
-
-export PATH=$PATH:/usr/local/go/bin
-export PATH=$PATH:/home/martin/go/bin
-export PATH=$PATH:/snap/bin
-export PATH=$PATH:$HOME/scripts
-export PATH=$PATH:$HOME/.cargo/bin
-
-export PATH=$PATH:/home/martin/.spicetify
