@@ -24,14 +24,14 @@
         "cavaFrameRate": 30,
         "mprisBlacklist": [
         ],
-        "preferredPlayer": "spotify, mpv",
+        "preferredPlayer": "spotify, mpv, spotify_player",
         "visualizerType": "linear",
         "volumeFeedback": false,
         "volumeOverdrive": false,
         "volumeStep": 5
     },
     "bar": {
-        "backgroundOpacity": 0.25,
+        "backgroundOpacity": 0,
         "capsuleOpacity": 1,
         "density": "compact",
         "exclusive": true,
@@ -53,14 +53,18 @@
                 {
                     "characterCount": 2,
                     "colorizeIcons": false,
+                    "emptyColor": "secondary",
                     "enableScrollWheel": true,
+                    "focusedColor": "primary",
                     "followFocusedScreen": false,
                     "groupedBorderOpacity": 1,
                     "hideUnoccupied": true,
                     "iconScale": 0.8,
                     "id": "Workspace",
                     "labelMode": "index",
+                    "occupiedColor": "secondary",
                     "showApplications": false,
+                    "showBadge": true,
                     "showLabelsOnlyWhenOccupied": true,
                     "unfocusedIconsOpacity": 1
                 }
@@ -68,37 +72,25 @@
             "left": [
                 {
                     "colorizeDistroLogo": false,
-                    "colorizeSystemIcon": "primary",
-                    "customIconPath": "/home/martin/Downloads/gentoo.svg",
-                    "enableColorization": true,
+                    "colorizeSystemIcon": "none",
+                    "customIconPath": "",
+                    "enableColorization": false,
                     "icon": "noctalia",
                     "id": "ControlCenter",
-                    "useDistroLogo": true
-                },
-                {
-                    "compactMode": true,
-                    "diskPath": "/",
-                    "id": "SystemMonitor",
-                    "showCpuTemp": true,
-                    "showCpuUsage": true,
-                    "showDiskUsage": true,
-                    "showGpuTemp": true,
-                    "showLoadAverage": false,
-                    "showMemoryAsPercent": false,
-                    "showMemoryUsage": true,
-                    "showNetworkStats": true,
-                    "showSwapUsage": false,
-                    "useMonospaceFont": true,
-                    "usePrimaryColor": false
+                    "useDistroLogo": false
                 },
                 {
                     "colorizeIcons": false,
                     "hideMode": "hidden",
-                    "id": "ActiveWindow",
-                    "maxWidth": 145,
-                    "scrollingMode": "hover",
-                    "showIcon": true,
-                    "useFixedWidth": false
+                    "iconScale": 0.8,
+                    "id": "Taskbar",
+                    "maxTaskbarWidth": 40,
+                    "onlyActiveWorkspaces": true,
+                    "onlySameOutput": true,
+                    "showPinnedApps": true,
+                    "showTitle": false,
+                    "smartWidth": true,
+                    "titleWidth": 120
                 },
                 {
                     "compactMode": false,
@@ -114,7 +106,7 @@
                     "showAlbumArt": true,
                     "showArtistFirst": true,
                     "showProgressRing": true,
-                    "showVisualizer": true,
+                    "showVisualizer": false,
                     "useFixedWidth": false,
                     "visualizerType": "linear"
                 }
@@ -124,26 +116,28 @@
                     "blacklist": [
                     ],
                     "colorizeIcons": false,
-                    "drawerEnabled": false,
+                    "drawerEnabled": true,
                     "hidePassive": false,
                     "id": "Tray",
                     "pinned": [
                     ]
                 },
                 {
-                    "defaultSettings": {
-                    },
-                    "id": "plugin:mangowc-layout-switcher"
-                },
-                {
                     "displayMode": "onhover",
                     "id": "Bluetooth"
                 },
                 {
-                    "hideWhenZero": true,
-                    "hideWhenZeroUnread": false,
-                    "id": "NotificationHistory",
-                    "showUnreadBadge": true
+                    "displayMode": "onhover",
+                    "id": "Network"
+                },
+                {
+                    "displayMode": "onhover",
+                    "id": "Brightness"
+                },
+                {
+                    "displayMode": "onhover",
+                    "id": "Volume",
+                    "middleClickCommand": "pwvucontrol || pavucontrol"
                 },
                 {
                     "deviceNativePath": "",
@@ -156,17 +150,10 @@
                     "warningThreshold": 30
                 },
                 {
-                    "displayMode": "onhover",
-                    "id": "Volume",
-                    "middleClickCommand": "pwvucontrol || pavucontrol"
-                },
-                {
-                    "displayMode": "onhover",
-                    "id": "Brightness"
-                },
-                {
-                    "displayMode": "onhover",
-                    "id": "Network"
+                    "hideWhenZero": false,
+                    "hideWhenZeroUnread": false,
+                    "id": "NotificationHistory",
+                    "showUnreadBadge": true
                 },
                 {
                     "customFont": "",
@@ -175,7 +162,7 @@
                     "id": "Clock",
                     "tooltipFormat": "HH:mm ddd, MMM dd",
                     "useCustomFont": false,
-                    "usePrimaryColor": true
+                    "usePrimaryColor": false
                 }
             ]
         }
@@ -235,15 +222,15 @@
             },
             {
                 "enabled": true,
+                "id": "brightness-card"
+            },
+            {
+                "enabled": true,
                 "id": "weather-card"
             },
             {
                 "enabled": true,
                 "id": "media-sysmon-card"
-            },
-            {
-                "enabled": false,
-                "id": "brightness-card"
             }
         ],
         "diskPath": "/",
@@ -310,6 +297,7 @@
         "allowPanelsOnScreenWithoutBar": true,
         "animationDisabled": false,
         "animationSpeed": 1,
+        "autoStartAuth": false,
         "avatarImage": "/home/martin/.face",
         "boxRadiusRatio": 1,
         "compactLockScreen": false,

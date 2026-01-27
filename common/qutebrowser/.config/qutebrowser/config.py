@@ -41,13 +41,6 @@ c.completion.open_categories = [
 c.tabs.title.format = "{audio}{current_title}"
 c.fonts.web.size.default = 20
 
-c.fonts.default_family = []
-c.fonts.default_size = "11pt"
-c.fonts.web.family.fixed = "monospace"
-c.fonts.web.family.sans_serif = "monospace"
-c.fonts.web.family.serif = "monospace"
-c.fonts.web.family.standard = "monospace"
-
 # dark mode setup
 c.colors.webpage.darkmode.enabled = True
 c.colors.webpage.darkmode.algorithm = "lightness-cielab"
@@ -63,11 +56,6 @@ config.set("content.cookies.store", True)
 
 c.content.blocking.enabled = True
 
-# c.colors.statusbar.normal.bg = "#00000000"
-# c.colors.statusbar.command.bg = "#00000000"
-# c.colors.tabs.even.bg = "#00000000"  # transparent tabs!!
-# c.colors.tabs.odd.bg = "#00000000"
-# c.colors.tabs.bar.bg = "#00000000"
 c.tabs.show = "multiple"
 
 c.window.transparent = True
