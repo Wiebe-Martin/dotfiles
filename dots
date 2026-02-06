@@ -1,0 +1,164 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+# Set safer IFS
+IFS=$'\n\t'
+
+# Readonly exports for package manager commands
+export PACMAN_COMMAND="sudo pacman -S --noconfirm --needed"
+export YAY_COMMAND="yay -S --noconfirm --needed"
+export APT_COMMAND="sudo apt install -y"
+export PORTAGE_COMMAND="sudo emerge -q"
+
+usage() {
+    cat <<EOF
+Usage:
+    dots (-p|--path) <path> [-a|--action <install|config|generate>]
+
+Options:
+    -p, --path <path>        Path to operate on (required)
+    -a, --action <action>    Action to perform (default: install + config)
+
+Actions:
+    install    Install the package
+    config     Configure the package
+    generate   Generate configuration files
+EOF
+    exit 1
+}
+
+PACKAGE_PATH=""
+ACTION=""
+
+# Parse command line arguments
+while [[ $# -gt 0 ]]; do
+    case "$1" in
+    -p | --path)
+        if [[ $# -lt 2 ]]; then
+            echo "Error: $1 requires an argument" >&2
+            usage
+        fi
+        PACKAGE_PATH="$2"
+        shift 2
+        ;;
+    -a | --action)
+        if [[ $# -lt 2 ]]; then
+            echo "Error: $1 requires an argument" >&2
+            usage
+        fi
+        ACTION="$2"
+        shift 2
+        ;;
+    -h | --help)
+        usage
+        ;;
+    *)
+        if [[ -z "$PACKAGE_PATH" ]]; then
+            PACKAGE_PATH="$1"
+        elif [[ -z "$ACTION" ]]; then
+            ACTION="$1"
+        else
+            echo "Error: Unknown argument: $1" >&2
+            usage
+        fi
+        shift
+        ;;
+    esac
+done
+
+# Enforce required arguments
+if [[ -z "$PACKAGE_PATH" ]]; then
+    echo "Error: --path is required" >&2
+    usage
+fi
+
+# Validate and normalize package path
+if [[ ! -e "$PACKAGE_PATH" ]]; then
+    echo "Error: Path does not exist: $PACKAGE_PATH" >&2
+    exit 1
+fi
+
+if [[ ! -d "$PACKAGE_PATH" ]]; then
+    echo "Error: Path is not a directory: $PACKAGE_PATH" >&2
+    exit 1
+fi
+
+# Convert to absolute path for safety
+PACKAGE_PATH=$(cd "$PACKAGE_PATH" && pwd)
+
+# Set default action if not specified
+if [[ -z "$ACTION" ]]; then
+    echo "Warning: No action specified, defaulting to 'install'" >&2
+    ACTION="install"
+fi
+
+# Validate action
+case "$ACTION" in
+install | config | generate)
+    # Valid action
+    ;;
+*)
+    echo "Error: Invalid action: $ACTION" >&2
+    echo "Valid actions are: install, config, generate" >&2
+    exit 1
+    ;;
+esac
+
+# Find the config script
+mapfile -t config_scripts < <(find "$PACKAGE_PATH" -maxdepth 1 -type f -name 'config_*.sh')
+
+if [[ ${#config_scripts[@]} -eq 0 ]]; then
+    echo "Error: No config_*.sh files found in $PACKAGE_PATH" >&2
+    exit 1
+fi
+
+if [[ ${#config_scripts[@]} -gt 1 ]]; then
+    echo "Warning: Multiple config_*.sh files found in $PACKAGE_PATH" >&2
+    echo "Using: ${config_scripts[0]}" >&2
+fi
+
+PACKAGE_CONFIG_SCRIPT="${config_scripts[0]}"
+
+# Validate the config script exists and is readable
+if [[ ! -f "$PACKAGE_CONFIG_SCRIPT" ]]; then
+    echo "Error: Config script is not a file: $PACKAGE_CONFIG_SCRIPT" >&2
+    exit 1
+fi
+
+if [[ ! -r "$PACKAGE_CONFIG_SCRIPT" ]]; then
+    echo "Error: Config script is not readable: $PACKAGE_CONFIG_SCRIPT" >&2
+    exit 1
+fi
+
+# Security check: Ensure config script doesn't contain suspicious patterns
+if grep -qE '(\$\(.*rm\s+-rf|curl.*\|.*sh|wget.*\|.*sh)' "$PACKAGE_CONFIG_SCRIPT"; then
+    echo "Error: Config script contains potentially dangerous commands" >&2
+    exit 1
+fi
+
+echo "Loading config script: $PACKAGE_CONFIG_SCRIPT"
+
+# Export variables for the sourced script
+export PACKAGE_PATH ACTION
+
+# Source the config script in a safer way
+# shellcheck disable=SC1090
+if ! source "$PACKAGE_CONFIG_SCRIPT"; then
+    echo "Error: Failed to source config script: $PACKAGE_CONFIG_SCRIPT" >&2
+    exit 1
+fi
+
+# Verify the action function exists
+if ! declare -f "$ACTION" >/dev/null 2>&1; then
+    echo "Error: Action function '$ACTION' not found in $PACKAGE_CONFIG_SCRIPT" >&2
+    exit 1
+fi
+
+# Execute the action
+echo "Executing action: $ACTION"
+if ! "$ACTION"; then
+    echo "Error: Action '$ACTION' failed" >&2
+    exit 1
+fi
+
+echo "Action '$ACTION' completed successfully"
