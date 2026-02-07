@@ -12,8 +12,6 @@ install() {
 
     if command -v apt >/dev/null 2>&1; then
         eval "$APT_COMMAND $APT_PACKAGE_NAME"
-
-        mkdir -p ~/.config/quickshell/noctalia-shell && curl -sL https://github.com/noctalia-dev/noctalia-shell/releases/latest/download/noctalia-latest.tar.gz | tar -xz --strip-components=1 -C ~/.config/quickshell/noctalia-shell
     elif command -v pacman >/dev/null 2>&1; then
         eval "$YAY_COMMAND $ARCH_PACKAGE_NAME"
     elif command -v emerge >/dev/null 2>&1; then

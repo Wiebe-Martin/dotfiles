@@ -32,6 +32,6 @@ config() {
         exit 1
     fi
 
-    echo "Linking $PACKAGE_PATH/$PACKAGE_NAME to $XDG_CONFIG_HOME/hypr"
-    ln -sf "$PACKAGE_PATH/$PACKAGE_NAME" "$XDG_CONFIG_HOME/hypr"
+    echo "Linking $PACKAGE_PATH/hypr to $XDG_CONFIG_HOME/hypr"
+    ln -sf "$PACKAGE_PATH/hypr" "$XDG_CONFIG_HOME/hypr"
 }

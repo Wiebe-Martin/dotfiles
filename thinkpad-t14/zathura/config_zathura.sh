@@ -3,7 +3,7 @@
 set -euo pipefail
 
 PACKAGE_NAME="zathura"
-ARCH_PACKAGE_NAME="zathura"
+ARCH_PACKAGE_NAME="zathura zathura-pdf-mupdf"
 APT_PACKAGE_NAME="zathura"
 PORTAGE_PACKAGE_NAME="app-text/zathura"
 

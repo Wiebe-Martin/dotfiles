@@ -28,5 +28,7 @@ settings:
     https://docs.noctalia.dev: access-paste
     https://github.com: access-paste
     https://grok.com: access-paste
+    https://mangowc.vercel.app: access-paste
+    https://rosepinetheme.com: access-paste
   content.notifications.enabled:
     https://jellyfin.wiebe-martin.duckdns.org: true
