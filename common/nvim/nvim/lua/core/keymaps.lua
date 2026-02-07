@@ -21,10 +21,10 @@ vim.keymap.set("n", "x", '"_x', opts)
 
 -- open file explorer
 vim.keymap.set(
-    "n",
-    "<leader>mf",
-    "<cmd> Lexplore <CR>",
-    { desc = "Open netrw file explorer", noremap = true, silent = true }
+	"n",
+	"<leader>mf",
+	"<cmd> Lexplore <CR>",
+	{ desc = "Open netrw file explorer", noremap = true, silent = true }
 )
 
 -- Vertical scroll and center
@@ -40,8 +40,8 @@ vim.keymap.set("v", "J", ":m '>+1<CR>gv=gv", opts)
 vim.keymap.set("v", "K", ":m '<-2<CR>gv=gv", opts)
 
 -- Buffers
-vim.keymap.set("n", "<Tab>", ":bnext<CR>", opts)
-vim.keymap.set("n", "<S-Tab>", ":bprevious<CR>", opts)
+-- vim.keymap.set("n", "<Tab>", ":bnext<CR>", opts)
+-- vim.keymap.set("n", "<S-Tab>", ":bprevious<CR>", opts)
 vim.keymap.set("n", "<leader>x", ":bdelete!<CR>", opts) -- close buffer
 vim.keymap.set("n", "<leader>b", "<cmd> enew <CR>", opts) -- new buffer
 
@@ -91,3 +91,6 @@ vim.keymap.set("n", "<leader>fj", "<cmd> :%!jq '.'<CR>", { desc = "Format curren
 
 -- tmux-sessionizer
 vim.keymap.set("n", "<C-f>", "<cmd>silent !tmux neww tmux-sessionizer<CR>")
+
+-- Clear highlights on search when pressing <Esc> in normal mode
+vim.keymap.set("n", "<Esc>", "<cmd>nohlsearch<CR>")

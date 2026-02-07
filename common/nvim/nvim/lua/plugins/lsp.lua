@@ -1,17 +1,12 @@
 return {
-	-- Main LSP Configuration
 	"neovim/nvim-lspconfig",
 	dependencies = {
-		-- Automatically install LSPs and related tools to stdpath for Neovim
 		{ "williamboman/mason.nvim", config = true }, -- NOTE: Must be loaded before dependants
 		"williamboman/mason-lspconfig.nvim",
 		"WhoIsSethDaniel/mason-tool-installer.nvim",
 
-		-- Useful status updates for LSP.
-		-- NOTE: `opts = {}` is the same as calling `require('fidget').setup({})`
 		{ "j-hui/fidget.nvim", opts = {} },
 
-		-- Allows extra capabilities provided by nvim-cmp
 		"hrsh7th/cmp-nvim-lsp",
 
 		{
@@ -20,11 +15,11 @@ return {
 			cmd = { "DapInstall", "DapUninstall" },
 			opts = {
 				automatic_installation = true,
-				handlers = {}, -- Can be extended for custom debugger configurations
+				handlers = {},
 				ensure_installed = {
-					"python", -- Example debuggers, update as needed
-					"delve", -- Go debugger
-					"codelldb", -- C/C++/Rust
+					"python",
+					-- "delve",
+					"codelldb",
 				},
 			},
 		},
@@ -174,8 +169,6 @@ return {
 				exportPdf = "onSave",
 			},
 		})
-
-		vim.lsp.config("racket_langserver", {})
 
 		-- Mason core
 		require("mason").setup()
