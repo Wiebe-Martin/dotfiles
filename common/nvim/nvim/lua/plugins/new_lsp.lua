@@ -76,7 +76,7 @@ return {
         local servers = {
             -- LSPs
             "clangd",
-            "cmake-language-server",
+            -- "cmake-language-server",
             "python-lsp-server",
             "lua-language-server",
             "tinymist",
@@ -180,7 +180,7 @@ return {
             "tinymist",
             "racket_langserver",
             "clangd",
-            "cmake",
+            -- "cmake",
             "pylsp",
         })
     end,
